@@ -1,0 +1,68 @@
+#!/bin/bash
+##################################################################
+##  			V. 1.0.1			   	##
+## 	       		by Spencer 			   	##
+##  1.0.0 - Created this program from song-search   		##
+##        - which was the original program without jq		##
+##								##
+##  1.0.1 - Made changes to curl command         	   	##
+## 	  - Added -o /dev/null and required         		##
+##        - "%{http_code}" which is curl friendlier 		##
+##								##
+##  1.0.2 - Added cache files to the mix. 			##
+## 	    These files  store response codes and filename	##
+##	    which shortens the process and doesn't get our	##
+## 	    IP banned from visiting YT in this manner because 	##
+##	    there's no clear way for me to currently implement	##
+##	    what I want to do in python.			##
+##	    Ultimately I will get this converted to python	##
+##	    since I find working with YT and python API to 	##
+##	    quite a good learning lesson. 			##
+##################################################################
+
+
+# This function allows one to search all of their Dubtrack/plugdj songs after downloading them from DT using JTBrinkmann's script, found here: https://github.com/JTBrinkmann/Dubtrack-Playlist-Pusher/
+
+   # Setting the user-agent, change this to your liking
+   ua="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) \
+   Chrome/61.0.3163.100 Safari/537.36";
+
+   echo "What artist or song title to search?";
+   read -r songinfo;
+   echo;
+# API KEY: AIzaSyB1kGx9g0moFptTKXc_q1plt_CXDM2Aoqg
+   until [[ -n "$songinfo" ]]; do
+     if [[ -z "$songinfo" ]]; then
+       echo "You need to enter a song name or artist";
+       read -r songinfo;
+     fi;
+   done;
+
+   songdir="/Users/spencer.anderson/testing/plugdj/";
+   cachedir="${songdir}cachedfiles/";
+   # filenames="$(find ${songdir} -type f -name '*.json' | awk -F'/' '{ gsub(/.json/, "", $6); print $6 }')"
+
+   # cleanly get output from all .json files with % as the delimiter.
+   # Change % to your preferred delimiter both here and in the while loop below
+
+   jq -r '.data[]|"\(input_filename)%\(.image)%\(.title)"' "${songdir}"*.json | \
+
+   # Grep for the artist or song title and replace any translated characters
+
+   grep -i "$songinfo" | \
+   gsed -r "s_(&amp;)_\\&_g; s_(&apos;)_\\'_g; s_(&quot;)_\"_g" | \
+
+   # Loop to take data from jq and neatly print
+   # Updated the curl response so I'm only grabbing the response code
+   while IFS='%' read -r filename responses titles; do
+      printf "%s\n%s %s\n\n" \
+             "$(awk -F'/' '{ gsub(/.json/, "", $6); print $6 }' <<<"$filename")" \
+	     "$(curl -sIL "$responses" -A "$ua" -w "%{http_code}" -o /dev/null)" \
+	     "$titles";
+      sleep .5;
+#      if [[ ! -d "$cachedir" ]]; then
+#        mkdir -p "${cachedir}";
+#      elif [[ -d "$cachedir" ]]; then
+#        continue;
+#
+  done;

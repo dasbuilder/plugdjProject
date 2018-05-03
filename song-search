@@ -1,0 +1,7 @@
+#!/bin/bash
+IFS=$'\n';
+echo 'Input name of artists you want to search: ';
+read -e tittle;
+
+output=$(find /Users/spencer.anderson/testing/plugdj/ -type f -exec ggrep -ioHP '[^"\{\}]*"title":"([^"]+)"' {} \; | sed 's/\.json//g' | tr ':,' ' ' | cut -d\/ -f7 | gawk -F'"' '/^[A-Za-z0-9]/{ gsub(/[\t]/, //); print $1, $4}' | grep -i "$tittle")
+echo "$output";
