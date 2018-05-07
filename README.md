@@ -23,6 +23,7 @@ I made this to search through all my dubtrack.fm .json files and find the artist
 
 #### Version 1.1 - Made changes to curl command
     Added -o /dev/null and required "%{http_code}" which is curl friendlier.
+    Refer to plugdj/README.md for more information. 
 
 
 You may still get use out of this, but you may need to tweak it. If you have any questions let me know.

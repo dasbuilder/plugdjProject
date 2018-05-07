@@ -12,14 +12,12 @@
    echo;
    until [[ -n "$songinfo" ]]; do
      if [[ -z "$songinfo" ]]; then
-       echo "You need to enter a song name or artist";
+       printf "You need to enter a song title, artist or group name\n";
        read -r songinfo;
      fi;
    done;
 
    songdir="/Users/userfifty/testing/plugdj/";
-  
-   # filenames="$(find ${songdir} -type f -name '*.json' | awk -F'/' '{ gsub(/.json/, "", $6); print $6 }')"
 
    # cleanly get output from all .json files with % as the delimiter.
    # Change % to your preferred delimiter both here and in the while loop below
