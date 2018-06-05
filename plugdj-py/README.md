@@ -1,4 +1,4 @@
-# Aritst or Song Search Using Python and JSON converted Dictionaries
+# Aritst or Song Search Using Python, and JSON converted to Python Dictionaries.
 
 - Loops through the directory and looks for files ending with .json.
 - Then it creates a list by adding the searchPath above and the fname (filename)
